@@ -46,7 +46,7 @@ function scaleData(rawData, maxValues) {
 
 // Fetch data from JSON and initialize the radar chart
 if (radarCanvas) {
-fetch("assets/js/radarplotdata.json")
+fetch("assets/js/radarplotdata.json?v=20260615-coauthor-metrics")
     .then(response => response.json())
     .then(data => {
         var ctx = radarCanvas.getContext('2d');
