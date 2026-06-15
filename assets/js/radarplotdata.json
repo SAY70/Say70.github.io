@@ -1,26 +1,24 @@
 {
-    "maxValues": {
-        "Citations": 520,
-        "h-index": 15,
-        "i10-index": 15,
-        "Journal articles": 20,
-        "Conference articles": 30,
-        "Conference abstracts": 30,
-        "Book chapters": 5,
-        "Preprints": 5,
-        "Co-authors": 70,
-        "Co-institutions": 30
-    },
-    "rawData": {
-        "Citations": 462,
-        "h-index": 11,
-        "i10-index": 11,
-        "Journal articles": 13,
-        "Conference articles": 23,
-        "Conference abstracts": 16,
-        "Book chapters": 1,
-        "Preprints": 3,
-        "Co-authors": 44,
-        "Co-institutions": 18
-    }
+  "maxValues": {
+    "Citations": 520,
+    "h-index": 15,
+    "i10-index": 15,
+    "Journal articles": 20,
+    "Conference proceedings": 10,
+    "Conference presentations": 5,
+    "Book chapters": 5,
+    "Co-authors": 60,
+    "Co-institutions": 30
+  },
+  "rawData": {
+    "Citations": 462,
+    "h-index": 11,
+    "i10-index": 11,
+    "Journal articles": 17,
+    "Conference proceedings": 8,
+    "Conference presentations": 4,
+    "Book chapters": 2,
+    "Co-authors": 56,
+    "Co-institutions": 18
+  }
 }

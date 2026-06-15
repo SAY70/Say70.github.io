@@ -37,7 +37,7 @@ const circleGridPlugin = {
 // Register the custom plugin
 Chart.register(circleGridPlugin);
 
-var ctx = document.getElementById('radar-chart').getContext('2d');
+const radarCanvas = document.getElementById('radar-chart');
 
 // Function to scale the data based on the max value for each axis
 function scaleData(rawData, maxValues) {
@@ -45,9 +45,11 @@ function scaleData(rawData, maxValues) {
 }
 
 // Fetch data from JSON and initialize the radar chart
-fetch("/assets/js/radarplotdata.json")
+if (radarCanvas) {
+fetch("assets/js/radarplotdata.json")
     .then(response => response.json())
     .then(data => {
+        var ctx = radarCanvas.getContext('2d');
         let maxValues = data.maxValues;
         let rawData = data.rawData;
         // console.log("Loaded Data:", maxValues, rawData);
@@ -130,3 +132,4 @@ fetch("/assets/js/radarplotdata.json")
         });
     })
     .catch(error => console.error("Error loading the JSON file:", error));
+}
