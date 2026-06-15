@@ -1,0 +1,36 @@
+name: Update Google Scholar metrics
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 9 * * 1"
+
+permissions:
+  contents: write
+
+jobs:
+  update-scholar-metrics:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout site
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Refresh Google Scholar metrics
+        env:
+          SCHOLAR_PROFILE_ID: I6wblyMAAAAJ
+        run: python assets/js/update_scholar_metrics.py
+
+      - name: Commit refreshed metrics
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Refresh Google Scholar metrics"
+          file_pattern: assets/js/radarplotdata.json assets/js/coauthor_data.json
