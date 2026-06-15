@@ -173,12 +173,15 @@
   margin-left: 6px;
   padding: 2px 8px;
   color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
   background: rgba(0, 187, 255, 0.72);
   border: 1px solid #00bbff;
   border-radius: 4px;
   font-size: 13px;
   font-weight: 700 !important;
   line-height: 1.35;
+  min-width: 64px;
+  text-align: center;
   text-decoration: none;
   text-transform: none !important;
   letter-spacing: 0 !important;
@@ -186,8 +189,13 @@
   box-shadow: 0 0 8px rgba(0, 187, 255, 0.28);
 }
 
+.portfolio .publication-list .resume-item a::after {
+  display: none;
+}
+
 .portfolio .publication-list .resume-item a:hover {
   color: #040404 !important;
+  -webkit-text-fill-color: #040404 !important;
   background: #1af07d;
   border-color: #00bbff;
   text-decoration: none;
