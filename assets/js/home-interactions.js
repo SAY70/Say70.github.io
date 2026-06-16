@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
         tick();
     }
 
-    document.querySelectorAll(".home-action, #header .social-links a").forEach(function (link) {
+    document.querySelectorAll("#header .social-links a").forEach(function (link) {
         link.addEventListener("pointerdown", function (event) {
             const ripple = document.createElement("span");
             const rect = link.getBoundingClientRect();
@@ -69,16 +69,6 @@ document.addEventListener("DOMContentLoaded", function () {
             ripple.style.top = `${event.clientY - rect.top}px`;
             link.appendChild(ripple);
             window.setTimeout(() => ripple.remove(), 620);
-        });
-    });
-
-    document.querySelectorAll(".home-action[href^='#']").forEach(function (link) {
-        link.addEventListener("click", function (event) {
-            const navLink = document.querySelector(`#navbar .nav-link[href='${link.getAttribute("href")}']`);
-            if (navLink) {
-                event.preventDefault();
-                navLink.click();
-            }
         });
     });
 });
