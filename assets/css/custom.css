@@ -227,6 +227,20 @@
   will-change: transform;
 }
 
+#header .home-name {
+  display: inline-block;
+  background: linear-gradient(135deg, #ffffff 0%, #1af07d 54%, #00bbff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 10px 30px rgba(26, 240, 125, 0.16));
+  cursor: default;
+}
+
+#header .home-name span {
+  color: inherit;
+}
+
 #header h1,
 #header h2,
 #header .navbar,
@@ -236,17 +250,30 @@
 
 #home-role {
   min-width: 9ch;
+  color: #1af07d !important;
+  -webkit-text-fill-color: #1af07d !important;
+  background: none !important;
+  border: 0 !important;
+  padding: 0 !important;
+  text-shadow:
+    0 0 18px rgba(26, 240, 125, 0.72),
+    0 0 34px rgba(0, 187, 255, 0.28);
+  animation: none !important;
 }
 
 #home-role::after {
   content: "";
   display: inline-block;
-  width: 2px;
-  height: 1em;
-  margin-left: 5px;
-  background: #1af07d;
-  vertical-align: -0.14em;
-  animation: homeCaret 0.9s steps(2, start) infinite;
+  width: 7px;
+  height: 7px;
+  margin-left: 8px;
+  border-radius: 50%;
+  background: #00bbff;
+  box-shadow:
+    0 0 10px rgba(0, 187, 255, 0.95),
+    0 0 22px rgba(26, 240, 125, 0.42);
+  vertical-align: 0.12em;
+  animation: homePulse 1.35s ease-in-out infinite;
 }
 
 .home-ripple {
@@ -260,12 +287,14 @@
   pointer-events: none;
 }
 
-@keyframes homeCaret {
-  0%, 45% {
-    opacity: 1;
+@keyframes homePulse {
+  0%, 100% {
+    opacity: 0.45;
+    transform: scale(0.74);
   }
-  46%, 100% {
-    opacity: 0;
+  50% {
+    opacity: 1;
+    transform: scale(1.28);
   }
 }
 
