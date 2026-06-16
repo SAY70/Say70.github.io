@@ -3,13 +3,14 @@
     justify-content: center;
     align-items: center;
     width: 100%;
-    min-height: 420px;
+    min-height: 460px;
     margin-top: 5px;
   }
 
   #chord-diagram svg {
     width: min(100%, 560px);
     height: auto;
+    display: block;
   }
   text {
     font-size: 12px;

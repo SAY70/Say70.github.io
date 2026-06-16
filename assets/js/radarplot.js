@@ -1,135 +1,122 @@
-Chart.register(ChartDataLabels);
+document.addEventListener("DOMContentLoaded", function () {
+    const canvas = document.getElementById("radar-chart");
+    if (!canvas) return;
 
-// Create a custom plugin for adding circle grid
-const circleGridPlugin = {
-    id: 'circleGrid',
-    beforeDraw: function(chart) {
-        const ctx = chart.ctx;
-        const scale = chart.scales.r;
+    const ctx = canvas.getContext("2d");
+    const palette = [
+        "#ff6384", "#36a2eb", "#4bc0c0", "#9966ff", "#ff9f40",
+        "#ffcd56", "#ffc8c8", "#1af07d", "#ffa500", "#ffffff"
+    ];
 
-        // Get the actual center of the radar chart (not from chartArea)
-        const centerX = scale.xCenter;  // Correct center X based on the scale
-        const centerY = scale.yCenter;  // Correct center Y based on the scale
-
-        const circleRadii = [0.2, 0.4, 0.6, 0.8, 1.0]; // Relative radii (0.2, 0.4, 0.6, 0.8, 1.0)
-        const colors = 'rgba(255, 255, 255, 0.5)'; // Light color for circles
-
-        // Set the circle style
-        ctx.strokeStyle = colors;
-        ctx.lineWidth = 1;
-
-        // Draw the circles
-        circleRadii.forEach(radius => {
-            // Calculate the pixel radius based on the scale and relative radius value
-            const radiusInPixels = scale.getDistanceFromCenterForValue(radius);
-            
-            // Only draw if the radius is valid (greater than 0)
-            if (radiusInPixels > 0) {
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, radiusInPixels, 0, Math.PI * 2);
-                ctx.closePath();
-                ctx.stroke();
-            }
+    function scaleData(rawData, maxValues) {
+        return Object.keys(rawData).map(label => {
+            const max = maxValues[label] || rawData[label] || 1;
+            return Math.max(0, Math.min(1, rawData[label] / max));
         });
     }
-};
 
-// Register the custom plugin
-Chart.register(circleGridPlugin);
+    function fitCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        const width = Math.max(320, Math.floor(rect.width));
+        const height = Math.max(320, Math.floor(rect.height));
+        const ratio = window.devicePixelRatio || 1;
 
-const radarCanvas = document.getElementById('radar-chart');
+        canvas.width = width * ratio;
+        canvas.height = height * ratio;
+        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+        return { width, height };
+    }
 
-// Function to scale the data based on the max value for each axis
-function scaleData(rawData, maxValues) {
-    return Object.keys(rawData).map(label => rawData[label] / maxValues[label]);
-}
-
-// Fetch data from JSON and initialize the radar chart
-if (radarCanvas) {
-fetch(`assets/js/radarplotdata.json?v=${Date.now()}`, { cache: "no-store" })
-    .then(response => response.json())
-    .then(data => {
-        var ctx = radarCanvas.getContext('2d');
-        let maxValues = data.maxValues;
-        let rawData = data.rawData;
-        // console.log("Loaded Data:", maxValues, rawData);
-
-        var chartData = {
-            labels: Object.keys(rawData),
-            datasets: [{
-                label: 'Research Metrics',
-                data: scaleData(rawData, maxValues), // Scaled data
-                backgroundColor: 'rgba(0, 255, 0, 0.2)',
-                borderColor: 'rgba(0, 255, 0, 1)',
-                borderWidth: 2,
-                pointBackgroundColor: [
-                    'rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)',
-                    'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)', 'rgba(255, 205, 86, 1)',
-                    'rgba(255, 205, 200, 1)', 'rgba(0, 255, 0, 1)',
-                    'rgba(255, 165, 0, 1)', 'rgba(255, 255, 255, 1)'
-                ],
-                pointBorderColor: '#fff',
-                pointBorderWidth: 2,
-                pointRadius: 7
-            }]
+    function polarPoint(centerX, centerY, radius, angle) {
+        return {
+            x: centerX + radius * Math.cos(angle),
+            y: centerY + radius * Math.sin(angle)
         };
+    }
 
-        var options = {
-            responsive: true,
-            scales: {
-                r: {
-                    min: 0,
-                    max: 1,
-                    ticks: { display: false },
-                    grid: { color: 'rgba(255, 255, 255, 0)' },
-                    angleLines: { display: true, color: 'rgba(255, 255, 255, 0.5)' },
-                    pointLabels: { font: { size: 16, family: 'Arial' }, color: '#FFFFFF' }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: false,
-                    position: 'bottom',
-                    labels: {
-                        font: { size: 16, family: 'Arial' },
-                        color: '#ffffff',
-                        usePointStyle: true,
-                        generateLabels: function(chart) {
-                            return chart.data.labels.map((label, index) => ({
-                                text: `${label}: ${rawData[label]}`,
-                                fillStyle: chart.data.datasets[0].pointBackgroundColor[index],
-                                strokeStyle: '#ffffff',
-                                lineWidth: chart.data.datasets[0].borderWidth
-                            }));
-                        }
-                    }
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(tooltipItem) {
-                            return `${tooltipItem.label}: ${rawData[tooltipItem.label]}`;
-                        }
-                    }
-                },
-                datalabels: {
-                    display: true,
-                    font: { size: 18, family: 'Arial', weight: 'bold' },
-                    formatter: (value, context) => rawData[context.chart.data.labels[context.dataIndex]],
-                    color: (context) => chartData.datasets[0].pointBackgroundColor[context.dataIndex],
-                    align: 'end',
-                    anchor: 'center',
-                    offset: 4
-                }
-            }
-        };
+    function drawRadar(data) {
+        const rawData = data.rawData || {};
+        const maxValues = data.maxValues || {};
+        const labels = Object.keys(rawData);
+        const values = scaleData(rawData, maxValues);
+        const { width, height } = fitCanvas();
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const radius = Math.min(width, height) * 0.31;
+        const labelRadius = radius + 54;
 
-        // Create the chart
-        new Chart(ctx, {
-            type: 'radar',
-            data: chartData,
-            options: options
+        ctx.clearRect(0, 0, width, height);
+        ctx.lineWidth = 1;
+        ctx.font = "12px Poppins, Arial, sans-serif";
+        ctx.textBaseline = "middle";
+
+        for (let ring = 1; ring <= 5; ring++) {
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius * ring / 5, 0, Math.PI * 2);
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.18)";
+            ctx.stroke();
+        }
+
+        labels.forEach((label, index) => {
+            const angle = -Math.PI / 2 + index * Math.PI * 2 / labels.length;
+            const end = polarPoint(centerX, centerY, radius, angle);
+            const labelPoint = polarPoint(centerX, centerY, labelRadius, angle);
+
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(end.x, end.y);
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.28)";
+            ctx.stroke();
+
+            ctx.fillStyle = "#f4f4f4";
+            ctx.textAlign = labelPoint.x < centerX - 5 ? "right" : labelPoint.x > centerX + 5 ? "left" : "center";
+            ctx.fillText(label, labelPoint.x, labelPoint.y - 8);
+
+            ctx.font = "700 13px Poppins, Arial, sans-serif";
+            ctx.fillStyle = palette[index % palette.length];
+            ctx.fillText(String(rawData[label]), labelPoint.x, labelPoint.y + 10);
+            ctx.font = "12px Poppins, Arial, sans-serif";
         });
-    })
-    .catch(error => console.error("Error loading the JSON file:", error));
-}
+
+        ctx.beginPath();
+        values.forEach((value, index) => {
+            const angle = -Math.PI / 2 + index * Math.PI * 2 / values.length;
+            const point = polarPoint(centerX, centerY, radius * value, angle);
+            if (index === 0) ctx.moveTo(point.x, point.y);
+            else ctx.lineTo(point.x, point.y);
+        });
+        ctx.closePath();
+        ctx.fillStyle = "rgba(26, 240, 125, 0.22)";
+        ctx.strokeStyle = "#1af07d";
+        ctx.lineWidth = 2;
+        ctx.fill();
+        ctx.stroke();
+
+        values.forEach((value, index) => {
+            const angle = -Math.PI / 2 + index * Math.PI * 2 / values.length;
+            const point = polarPoint(centerX, centerY, radius * value, angle);
+            ctx.beginPath();
+            ctx.arc(point.x, point.y, 5, 0, Math.PI * 2);
+            ctx.fillStyle = palette[index % palette.length];
+            ctx.strokeStyle = "#ffffff";
+            ctx.lineWidth = 1.5;
+            ctx.fill();
+            ctx.stroke();
+        });
+    }
+
+    fetch(`assets/js/radarplotdata.json?v=${Date.now()}`, { cache: "no-store" })
+        .then(response => response.json())
+        .then(data => {
+            drawRadar(data);
+            window.addEventListener("resize", () => drawRadar(data));
+        })
+        .catch(error => {
+            console.error("Error loading radar metrics:", error);
+            const { width, height } = fitCanvas();
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "14px Poppins, Arial, sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("Metrics unavailable", width / 2, height / 2);
+        });
+});
