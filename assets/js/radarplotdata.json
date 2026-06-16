@@ -1,8 +1,8 @@
 {
   "maxValues": {
-    "Citations": 520,
-    "h-index": 15,
-    "i10-index": 15,
+    "Citations": 300,
+    "h-index": 10,
+    "i10-index": 10,
     "Journal articles": 20,
     "Conference proceedings": 10,
     "Conference presentations": 5,
@@ -11,9 +11,9 @@
     "Co-institutions": 30
   },
   "rawData": {
-    "Citations": 462,
-    "h-index": 11,
-    "i10-index": 11,
+    "Citations": 270,
+    "h-index": 9,
+    "i10-index": 7,
     "Journal articles": 17,
     "Conference proceedings": 8,
     "Conference presentations": 4,
