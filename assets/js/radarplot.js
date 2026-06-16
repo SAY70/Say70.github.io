@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    fetch(`assets/js/radarplotdata.json?v=${Date.now()}`, { cache: "no-store" })
+    fetch(`assets/js/radarplotdata.json?v=20260616-scholar-citations-${Date.now()}`, { cache: "no-store" })
         .then(response => response.json())
         .then(data => {
             drawRadar(data);
