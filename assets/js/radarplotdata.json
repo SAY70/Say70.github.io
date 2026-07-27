@@ -7,18 +7,18 @@
     "Conference proceedings": 10,
     "Conference presentations": 5,
     "Book chapters": 5,
-    "Co-authors": 60,
-    "Co-institutions": 30
+    "Co-authors": 70,
+    "Co-institutions": 20
   },
   "rawData": {
-    "Citations": 270,
+    "Citations": 281,
     "h-index": 9,
-    "i10-index": 7,
-    "Journal articles": 17,
+    "i10-index": 8,
+    "Journal articles": 18,
     "Conference proceedings": 8,
     "Conference presentations": 4,
-    "Book chapters": 2,
-    "Co-authors": 56,
+    "Book chapters": 3,
+    "Co-authors": 68,
     "Co-institutions": 18
   }
 }
