@@ -1,0 +1,13 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor settings
+.vscode/
+.idea/
+
+# Python (Scholar metrics script)
+__pycache__/
+*.pyc
+.venv/
+venv/
